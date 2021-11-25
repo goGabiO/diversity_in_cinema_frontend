@@ -13,6 +13,5 @@ gcsfs
 google-cloud-storage
 
 # utilities
-base64
 streamlit
 matplotlib
