@@ -61,8 +61,7 @@ st.image(image, use_column_width=True, output_format="PNG")
 '''
 ## Select a movie to view
 '''
-option = st.selectbox('Which movie would you like to view?',
-                      ('Man of Steel', 'Ace Ventura'))
+option = st.selectbox('', ('Man of Steel', 'Ace Ventura'))
 
 st.write('You selected:', option)
 
