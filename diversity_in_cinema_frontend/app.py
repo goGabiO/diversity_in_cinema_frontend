@@ -2,7 +2,6 @@ import streamlit as st
 import base64
 import pandas as pd
 import matplotlib.pyplot as plt
-from google.cloud import storage
 
 CSS = """
 h1 {
