@@ -2,6 +2,7 @@ import streamlit as st
 import base64
 import pandas as pd
 import matplotlib.pyplot as plt
+from google.cloud import storage
 
 CSS = """
 h1 {
@@ -69,7 +70,7 @@ with st.container():
     if option != "":
         search_terms = option.lower().split()
         movie_name = '_'.join(search_terms)
-        file_name = f'raw_data/{movie_name}_results.csv'
+        file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}_results.csv'
         df = pd.read_csv(file_name)
         x = df["gender"].value_counts().index
         y = df["gender"].value_counts().values

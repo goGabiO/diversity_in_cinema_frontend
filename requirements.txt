@@ -8,7 +8,7 @@ setuptools>=26
 numpy
 pandas
 
-# API
+# web
 gcsfs
 google-cloud-storage
 
