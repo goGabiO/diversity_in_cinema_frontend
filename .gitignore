@@ -7,6 +7,6 @@ raw_data/
 **/__pycache__/
 .env
 .python-version
-.jpg
-.png
-.webp
+*.jpg
+*.png
+*.webp
