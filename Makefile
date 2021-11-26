@@ -37,7 +37,7 @@ upload_data:
 # ----------------------------------
 
 streamlit:
-	-@streamlit run app.py
+	-@streamlit run diversity_in_cinema_frontend/app.py
 
 heroku_login:
 	-@heroku login
