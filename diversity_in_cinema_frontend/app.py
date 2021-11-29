@@ -6,21 +6,21 @@ from PIL import Image
 from diversity_in_cinema_frontend.api import *
 import requests
 
-CSS = """
-h1 {
-    color: black;
-}
-h2 {
-    color: black;
-}
-h3 {
-    color: black;
-}
-p {
-    color: black;
-}
-"""
-st.write(f'<style>{CSS}</style>', unsafe_allow_html=True)
+# CSS = """
+# h1 {
+#     color: black;
+# }
+# h2 {
+#     color: black;
+# }
+# h3 {
+#     color: black;
+# }
+# p {
+#     color: black;
+# }
+# """
+# st.write(f'<style>{CSS}</style>', unsafe_allow_html=True)
 
 # @st.cache
 # def load_image(path):
@@ -65,6 +65,7 @@ if option != "":
                   'Statistical Overview'))
     st.title(f'{option}')
     if select_status == 'Info':
+
         col1, col2, col3 = st.columns(3)
         with col1:
             pass
@@ -86,9 +87,9 @@ if option != "":
             st.subheader("Relase Date")
             st.text(movie_basic[1]['release_date'])
             movie_info = fetch_movie_details(option)
-            st.subheader("Genres")
-            for index in range(len(movie_info['genres'])):
-                st.text(movie_info['genres'][index]['name'])
+            st.subheader('Runtime')
+            runtime = movie_info['runtime']
+            st.text(f'{runtime} minutes')
 
         with col2:
             movie_info = fetch_movie_details(option)
@@ -98,12 +99,46 @@ if option != "":
             st.subheader('Revenue')
             revenue = movie_info['revenue']
             st.text(f'${revenue}')
-            st.subheader('Runtime')
-            runtime = movie_info['runtime']
-            st.text(f'{runtime} minutes')
 
         with col3:
+            movie_info = fetch_movie_details(option)
+            st.subheader("Genres")
+            for index in range(len(movie_info['genres'])):
+                st.text(movie_info['genres'][index]['name'])
+
+        st.header("Cast & Crew")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
             movie_info = fetch_movie_credits(option)
+            st.subheader("Cast")
+            for index in range(len(movie_info['cast'])):
+                if movie_info['cast'][index]['gender'] == 1:
+                    name = movie_info['cast'][index]['name']
+                    gender = 'Female'
+                    st.text(f'{name}, {gender}')
+                else:
+                    name = movie_info['cast'][index]['name']
+                    gender = 'Male'
+                    st.text(f'{name}, {gender}')
+
+        with col2:
+            movie_info = fetch_movie_credits(option)
+            st.subheader("Crew")
+            for index in range(len(movie_info['crew'])):
+                if movie_info['crew'][index]['gender'] == 1:
+                    name = movie_info['crew'][index]['name']
+                    gender = "Female"
+                    job = movie_info['crew'][index]['job']
+                    st.text(f'{name}, {gender}: {job}')
+                else:
+                    name = movie_info['crew'][index]['name']
+                    gender = "Male"
+                    job = movie_info['crew'][index]['job']
+                    st.text(f'{name}, {gender}: {job}')
+
+
 
     elif select_status == 'Gender Statistics':
         with st.container():
@@ -128,13 +163,3 @@ else:
     response = requests.get(url.strip(), stream=True)
     image = Image.open(response.raw)
     st.image(image, use_column_width=True, output_format="PNG")
-
-
-# with st.container():
-#     if option != "":
-#         movie_info = fetch_movie_basic_data(option)
-#         movie_poster = movie_info[1]['poster_path']
-#         url = f'https://www.themoviedb.org/t/p/w600_and_h900_bestv2{movie_poster}'
-#         response = requests.get(url.strip(), stream=True)
-#         image = Image.open(response.raw)
-#         st.image(image, width=350, output_format="JPG")
