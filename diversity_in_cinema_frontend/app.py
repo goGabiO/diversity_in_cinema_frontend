@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
 from diversity_in_cinema_frontend.api import *
+from diversity_in_cinema_frontend.visualizations import *
 import requests
 
 # CSS = """
@@ -142,17 +143,31 @@ if option != "":
 
     elif select_status == 'Gender Statistics':
         with st.container():
-            st.header("Statistics")
+            st.header("Gender Statistics")
             option_new = option.replace(':','')
             search_terms = option_new.lower().split()
             movie_name = '_'.join(search_terms)
             file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/gender_statistics.csv'
             df = pd.read_csv(file_name)
-            x = df["gender"].value_counts().index
-            y = df["gender"].value_counts().values
-            fig, ax = plt.subplots()
-            plt.bar(x, y)
-            st.pyplot(fig)
+
+            go_fig = g_screentime_donut(df)
+            st.plotly_chart(go_fig, use_container_width=True)
+
+            go_2_fig = single_g_screentime_donut(df)
+            st.plotly_chart(go_2_fig, use_container_width=True)
+
+    elif select_status == 'Race Statistics':
+        with st.container():
+            st.header("Race Statistics")
+            option_new = option.replace(':', '')
+            search_terms = option_new.lower().split()
+            movie_name = '_'.join(search_terms)
+            file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/race_statistics.csv'
+            df = pd.read_csv(file_name)
+
+            go_fig = r_screentime_donut(df)
+            st.plotly_chart(go_fig, use_container_width=True)
+
 
     else:
         pass
