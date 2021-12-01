@@ -154,8 +154,8 @@ if option != "":
     elif select_status == 'Gender Statistics':
         with st.container():
             st.header("Gender Statistics")
-            option_new = option.replace(':','')
-            search_terms = option_new.lower().split()
+            #option_new = option.replace(':','').replace(',',' ')
+            search_terms = option.split()
             movie_name = '_'.join(search_terms)
             file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics'
             df = pd.read_csv(file_name)
@@ -172,8 +172,8 @@ if option != "":
     elif select_status == 'Race Statistics':
         with st.container():
             st.header("Race Statistics")
-            option_new = option.replace(':', '')
-            search_terms = option_new.lower().split()
+            #option_new = option.replace(':', '').replace(',',' ')
+            search_terms = option.split()
             movie_name = '_'.join(search_terms)
             file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics'
             df = pd.read_csv(file_name)
