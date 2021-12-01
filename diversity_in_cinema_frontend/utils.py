@@ -22,7 +22,7 @@ def get_movie_list(subfolders):
             replace("_", " ")\
                 for x in \
                     client.list_blobs(BUCKET_NAME_STREAMLIT, prefix=subfolders)]
-    # replace first entry with empty string
+    # replace first entry with empty str
     file_names[0] = ""
 
     return file_names
