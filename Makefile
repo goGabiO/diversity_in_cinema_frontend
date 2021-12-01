@@ -36,6 +36,8 @@ upload_data:
 #         HEROKU COMMANDS
 # ----------------------------------
 
+APP_NAME=diversity-in-hollywood
+
 streamlit:
 	-@streamlit run diversity_in_cinema_frontend/app.py
 
