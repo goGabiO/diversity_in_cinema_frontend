@@ -58,7 +58,7 @@ import requests
 
 st.sidebar.header("Diversity and Representation in Hollywood")
 
-movie_options = get_movie_list()
+movie_options = get_movie_list("CSVs")
 
 option = st.sidebar.selectbox("Select a movie to view", (movie_options))
 
