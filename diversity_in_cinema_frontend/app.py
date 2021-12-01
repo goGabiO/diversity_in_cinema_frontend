@@ -54,7 +54,7 @@ import requests
 # image_path = 'faces.webp'
 # image_link = '~/code/moe221/diversity_in_cinema_frontend/'
 
-# st.write(background_image_style(image_path), unsafe_allow_html=True)
+# st.write(background_image_style(image_path), unsafe_allow_html=True) hello
 
 st.sidebar.header("Diversity and Representation in Hollywood")
 
