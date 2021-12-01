@@ -71,6 +71,9 @@ if option != "":
 
         col1, col2, col3 = st.columns(3)
         with col1:
+            st.text('')
+            st.text('')
+            st.text('')
             movie_info = fetch_movie_basic_data(option)
             movie_poster = movie_info[1]['poster_path']
             url = f'https://www.themoviedb.org/t/p/w600_and_h900_bestv2{movie_poster}'
