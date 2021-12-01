@@ -69,9 +69,6 @@ if option != "":
 
         col1, col2, col3 = st.columns(3)
         with col1:
-            pass
-
-        with col2:
             movie_info = fetch_movie_basic_data(option)
             movie_poster = movie_info[1]['poster_path']
             url = f'https://www.themoviedb.org/t/p/w600_and_h900_bestv2{movie_poster}'
@@ -79,7 +76,18 @@ if option != "":
             image = Image.open(response.raw)
             st.image(image, use_column_width=True, output_format="JPG")
 
+        with col2:
+            url = 'https://www.freepnglogos.com/uploads/line-png/straight-vertical-line-transparent-27.png'
+            response = requests.get(url.strip(), stream=True)
+            image = Image.open(response.raw)
+            st.image(image, use_column_width=True, output_format="PNG")
+
         with col3:
+            # movie_face = option
+            # url = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_face}.jpg'
+            # response = requests.get(url.strip(), stream=True)
+            # image = Image.open(response.raw)
+            # st.image(image, use_column_width=True, output_format="JPG")
             pass
 
         col1, col2, col3 = st.columns(3)
@@ -147,7 +155,7 @@ if option != "":
             option_new = option.replace(':','')
             search_terms = option_new.lower().split()
             movie_name = '_'.join(search_terms)
-            file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/gender_statistics.csv'
+            file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics.csv'
             df = pd.read_csv(file_name)
 
             go_fig = g_screentime_donut(df)
