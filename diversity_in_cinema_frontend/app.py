@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from diversity_in_cinema_frontend.api import *
 from diversity_in_cinema_frontend.visualizations import *
+from diversity_in_cinema_frontend.utils import *
 import requests
 
 # CSS = """
@@ -57,8 +58,9 @@ import requests
 
 st.sidebar.header("Diversity and Representation in Hollywood")
 
-option = st.sidebar.selectbox("Select a movie to view",
-                                     ('','Man of Steel (2013)', 'Ace Ventura: Pet Detective (1994)'))
+movie_options = get_movie_list()
+
+option = st.sidebar.selectbox("Select a movie to view", (movie_options))
 
 if option != "":
     select_status = st.sidebar.radio(
@@ -155,14 +157,17 @@ if option != "":
             option_new = option.replace(':','')
             search_terms = option_new.lower().split()
             movie_name = '_'.join(search_terms)
-            file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics.csv'
+            file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics'
             df = pd.read_csv(file_name)
 
             go_fig = g_screentime_donut(df)
             st.plotly_chart(go_fig, use_container_width=True)
 
-            go_2_fig = single_g_screentime_donut(df)
+            go_2_fig = only_men_screentime_donut(df)
             st.plotly_chart(go_2_fig, use_container_width=True)
+
+            go_3_fig = only_women_screentime_donut(df)
+            st.plotly_chart(go_3_fig, use_container_width=True)
 
     elif select_status == 'Race Statistics':
         with st.container():
@@ -170,11 +175,14 @@ if option != "":
             option_new = option.replace(':', '')
             search_terms = option_new.lower().split()
             movie_name = '_'.join(search_terms)
-            file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/race_statistics.csv'
+            file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics'
             df = pd.read_csv(file_name)
 
             go_fig = r_screentime_donut(df)
             st.plotly_chart(go_fig, use_container_width=True)
+
+            go_2_fig = woc_screentime_donut(df)
+            st.plotly_chart(go_2_fig, use_container_width=True)
 
 
     else:
