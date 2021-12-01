@@ -16,3 +16,4 @@ google-cloud-storage
 streamlit
 matplotlib
 requests
+plotly
