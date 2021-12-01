@@ -18,9 +18,10 @@ def get_movie_list(subfolders):
 
     client = storage.Client()
     file_names = [str(x).split(f"{subfolders}/")[1].\
-        split("/statistics")[0]\
-            for x in \
-                client.list_blobs(BUCKET_NAME_STREAMLIT, prefix=subfolders)]
+        split("/statistics")[0].\
+            replace("_", " ")\
+                for x in \
+                    client.list_blobs(BUCKET_NAME_STREAMLIT, prefix=subfolders)]
     # replace first entry with empty string
     file_names[0] = ""
 
