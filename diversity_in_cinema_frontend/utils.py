@@ -40,6 +40,8 @@ def get_evolution_data():
 
     for movie in tqdm(movie_list):
 
+        movie = movie.replace(" ", "_")
+
         if movie == "":
             continue
 

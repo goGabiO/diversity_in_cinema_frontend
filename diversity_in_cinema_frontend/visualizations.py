@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
+from plotly.subplots import make_subplots
 
 from diversity_in_cinema_frontend.params import *
 
@@ -181,7 +182,6 @@ def plot_race_timeline(total_stats_df, plot_type="bar", step=5):
                          "value": "Screentime [%]",
                          "year": ""
                      })
-        fig.show()
 
     elif plot_type == "line":
         fig = px.line(df_grouped,
@@ -298,15 +298,6 @@ def run_time_distribution(movie_title, by="gender"):
 
     return fig
 
-
-import plotly.graph_objects as go
-import plotly.subplots as sp
-
-
-import plotly.graph_objects as go
-import plotly.subplots as sp
-
-
 def dashboard_gender(movie_title, movie_stats_df):
 
     # grab csvs
@@ -372,9 +363,24 @@ def dashboard_gender(movie_title, movie_stats_df):
     return this_figure
 
 
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-import numpy as np
+def dashboard_race(movie_stats_df):
+
+    fig = make_subplots(rows=1,
+                        cols=2,
+                        specs=[[{
+                            "type": "domain"
+                        }, {
+                            "type": "domain"
+                        }]])
+
+    fig1 = r_screentime_donut(movie_stats_df)
+    fig2 = woc_screentime_donut(movie_stats_df)
+
+    fig.add_trace(fig1, row=1, col=1)
+
+    fig.add_trace(fig2, row=1, col=2)
+
+    return fig
 
 
 def overall_gender_dash(total_stats_df):
