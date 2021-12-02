@@ -47,6 +47,9 @@ def get_evolution_data():
 
         year = regex.findall(movie)[0]
 
+        print(year)
+        print(movie)
+
         df = pd.read_csv(
             f"gs://{BUCKET_NAME_STREAMLIT}/CSVs/{movie}/statistics",
             index_col=None)
