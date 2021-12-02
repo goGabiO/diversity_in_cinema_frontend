@@ -152,6 +152,7 @@ def plot_gender_timeline(df, plot_type="bar", step=5):
 def plot_race_timeline(total_stats_df, plot_type="bar", step=5):
 
     # group by decade
+    total_stats_df['year'] = pd.to_datetime(total_stats_df['year'])
     df_grouped = total_stats_df.groupby(
         pd.cut(total_stats_df["year"],
                pd.date_range('1920', '2030', freq=f'{step}YS'),
@@ -515,7 +516,7 @@ def overall_race_dash(total_stats_df):
 
     this_figure.update_layout(
         title_text=
-        f"Number of POC VS. revenue                                  Screenttime percentage evoultion"
+        f"Number of POC VS. revenue  |  Screentime percentage evolution"
     )
     # Add annotations in the center of the donut pies
 

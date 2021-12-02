@@ -49,11 +49,10 @@ if option == "":
         st.text('on gender and race representation, along with a composite "face of the movie"')
 
     elif select_status == 'Overall Statistics':
-        total_stats_df = get_evolution_data()
+        total_stats_df = pd.read_csv('raw_data/overall_dash_data.csv')
         go_fig = overall_gender_dash(total_stats_df)
         st.plotly_chart(go_fig, use_container_width=False)
 
-        total_stats_df_2 = get_evolution_data()
         go_fig_2 = overall_race_dash(total_stats_df)
         st.plotly_chart(go_fig_2, use_container_width=False)
 
