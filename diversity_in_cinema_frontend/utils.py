@@ -40,10 +40,15 @@ def get_evolution_data():
 
     for movie in tqdm(movie_list):
 
+        movie = movie.replace(" ", "_")
+
         if movie == "":
             continue
 
         year = regex.findall(movie)[0]
+
+        print(year)
+        print(movie)
 
         df = pd.read_csv(
             f"gs://{BUCKET_NAME_STREAMLIT}/CSVs/{movie}/statistics",

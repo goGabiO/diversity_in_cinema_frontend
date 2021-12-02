@@ -93,7 +93,7 @@ def r_screentime_donut(df):
 
 def woc_screentime_donut(df):
     x = [df['women_of_color'].values[0], (100-df['women_of_color'].values[0])]
-    names = ['Women of color present', 'No women of color present']
+    names = ['Women of color', 'No women of color']
 
     go_fig = go.Figure()
 
@@ -181,7 +181,6 @@ def plot_race_timeline(total_stats_df, plot_type="bar", step=5):
                          "value": "Screentime [%]",
                          "year": ""
                      })
-        fig.show()
 
     elif plot_type == "line":
         fig = px.line(df_grouped,
@@ -468,6 +467,13 @@ import plotly.subplots as sp
 
 
 def overall_race_dash(total_stats_df):
+    total_stats_df["non_white_count"] = total_stats_df[[
+        'total_asian', 'total_black', 'total_indian', 'total_latino_hispanic',
+        'total_middle_eastern'
+    ]].sum(axis=1)
+
+    total_stats_df["non_white_count_percent"] = total_stats_df[
+        "non_white_count"] / total_stats_df["total_white"]
 
     # Create figures in Express
     figure2 = plot_race_timeline(total_stats_df, plot_type="bar", step=10)
