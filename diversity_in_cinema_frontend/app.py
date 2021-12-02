@@ -50,7 +50,7 @@ if option == "":
 
     elif select_status == 'Overall Statistics':
         total_stats_df = pd.read_csv(
-            'diversity_in_cinema_frontend/overall_dash_data.csv')
+            'overall_dash_data.csv')
         go_fig = overall_gender_dash(total_stats_df)
         st.plotly_chart(go_fig, use_container_width=False)
 
