@@ -10,9 +10,11 @@ import requests
 
 movie_options = get_movie_list("CSVs")
 
-option = st.selectbox("Select an initial movie to view", (movie_options))
+option = st.sidebar.selectbox("Select a movie to view", (movie_options))
+
 
 if option == "":
+    select_status = st.sidebar.radio("Pages", ('Home', 'Overall Statistics'))
     CSS = """
     h1 {
         color: black;
@@ -33,6 +35,27 @@ if option == "":
      body {background-color: white;}
      """
     st.write(f'<style>{CSS}</style>', unsafe_allow_html=True)
+
+    if select_status == 'Home':
+
+        st.title("Diversity in")
+
+        image = Image.open('Hollywood-Sign.png')
+        st.image(image, use_column_width=True)
+
+        st.text('')
+        st.text('Diversity in Hollywood uses deep learning to detect faces in')
+        st.text('every key frame of a selected movie and generates a dashboard showing statistics')
+        st.text('on gender and race representation, along with a composite "face of the movie"')
+
+    elif select_status == 'Overall Statistics':
+        total_stats_df = get_evolution_data()
+        go_fig = overall_gender_dash(total_stats_df)
+        st.plotly_chart(go_fig, use_container_width=False)
+
+        total_stats_df_2 = get_evolution_data()
+        go_fig_2 = overall_race_dash(total_stats_df)
+        st.plotly_chart(go_fig_2, use_container_width=False)
 
     # @st.cache
     # def load_image(path):
@@ -63,27 +86,18 @@ if option == "":
 
     # st.write(background_image_style(image_path), unsafe_allow_html=True)
 
-    st.title("Diversity in")
-
-    image = Image.open('Hollywood-Sign.png')
-    st.image(image, use_column_width=True)
-
     # with col1:
     #     url = 'https://i.pinimg.com/originals/d8/9b/35/d89b3534d687eb456c47c4e5097b81c6.png'
     #     response = requests.get(url.strip(), stream=True)
     #     image = Image.open(response.raw)
     #     st.image(image, use_column_width=True, output_format="PNG")
 
-    st.text('')
-    st.text('Diversity in Hollywood uses deep learning to detect faces in')
-    st.text('every key frame of a selected movie and generates a dashboard showing statistics')
-    st.text('on gender and race representation, along with a composite "face of the movie"')
 
 else:
     st.sidebar.header("Diversity in Hollywood")
     select_status = st.sidebar.radio(
-        "Pages", ('Info', 'Gender Statistics', 'Race Statistics',
-                  'Statistical Overview'))
+        "Pages", ('Info', 'Gender Statistics', 'Race Statistics'))
+    # 'Statistical Overview'
     st.title(f'{option}')
     if select_status == 'Info':
 
@@ -181,14 +195,14 @@ else:
             file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics'
             df = pd.read_csv(file_name)
 
-            go_fig = g_screentime_donut(df)
-            st.plotly_chart(go_fig, use_container_width=True)
+            go_fig = dashboard_gender(movie_name, df)
+            st.plotly_chart(go_fig, use_container_width=False, )
 
-            go_2_fig = only_men_screentime_donut(df)
-            st.plotly_chart(go_2_fig, use_container_width=True)
+            # go_2_fig = only_men_screentime_donut(df)
+            # st.plotly_chart(go_2_fig, use_container_width=False)
 
-            go_3_fig = only_women_screentime_donut(df)
-            st.plotly_chart(go_3_fig, use_container_width=True)
+            # go_3_fig = only_women_screentime_donut(df)
+            # st.plotly_chart(go_3_fig, use_container_width=False)
 
     elif select_status == 'Race Statistics':
         with st.container():
