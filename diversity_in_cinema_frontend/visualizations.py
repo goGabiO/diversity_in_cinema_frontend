@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
+from diversity_in_cinema_frontend.params import *
 
 def g_screentime_donut(df):
     x = [df['man_screentime'].values[0], df['woman_screentime'].values[0]]
@@ -207,3 +208,116 @@ def man_woman_screentime_bar(df):
                  color=one_movie_gender.index)
 
     return fig
+
+def run_time(movie_title, by="gender"):
+
+    movie_title = movie_title.replace("_", " ").replace(".csv", "") + ".csv"
+
+    df = pd.read_csv(
+    f"gs://{BUCKET_NAME}/output/{movie_title}", index_col=None,)
+
+    # add seconds column -> 1 frame = 0.5 seconds
+    df["seconds"] = df["frame_number"] / 2
+
+    # add minutes
+    df["minutes"] = round((df["seconds"] / 60))
+
+    df_grouped = df.groupby(["minutes", by], as_index=False).count()
+
+
+    fig = px.scatter(df_grouped,
+                     x="minutes",
+                     y="face_id",
+                     size="face_id",
+                     color=by,
+                     size_max=60,
+                     labels={"face_id": "Number of detected faces", "minutes": "Film length [minutes]"},
+                    title=f"Distribution of {by.capitalize()} Over Film Run-time")
+    fig.show()
+
+
+
+def run_time_distribution(movie_title, by="gender"):
+
+    movie_title = movie_title.replace("_", " ").replace(".csv", "") + ".csv"
+
+    df = pd.read_csv(
+    f"gs://{BUCKET_NAME}/output/{movie_title}", index_col=None,)
+
+    # add seconds column -> 1 frame = 0.5 seconds
+    df["seconds"] = df["frame_number"] / 2
+
+    # add minutes
+    df["minutes"] = round((df["seconds"] / 60))
+
+    df_grouped = df.groupby(["minutes", by], as_index=False).count()
+
+
+    fig = px.scatter(df_grouped,
+                     x="minutes",
+                     y="face_id",
+                     size="face_id",
+                     color=by,
+                     size_max=60,
+                     labels={"face_id": "Number of detected faces",
+                             "minutes": "Film length [minutes]"},
+                     title=f"Distribution of {by.capitalize()} Over Film Run-time")
+
+    return fig
+
+
+import plotly.graph_objects as go
+import plotly.subplots as sp
+
+
+def dashboard_gender(movie_title):
+
+    # grab csvs
+    movie_name = movie_title.replace(" ", "_")
+    file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics'
+    df = pd.read_csv(file_name)
+
+    # Create figures in Express
+    figure1 = run_time(movie_name, by="gender")
+    figure2 = race_screentime_bar(df)
+    figure3 = man_woman_screentime_bar(df)
+
+    # For as many traces that exist per Express figure, get the traces from each plot and store them in an array.
+    # This is essentially breaking down the Express fig into it's traces
+
+    figure1_traces = []
+    figure2_traces = []
+    figure3_traces = []
+
+    for trace in range(len(figure1["data"])):
+        figure1_traces.append(figure1["data"][trace])
+
+    for trace in range(len(figure2["data"])):
+        figure2_traces.append(figure2["data"][trace])
+
+    for trace in range(len(figure3["data"])):
+        figure3_traces.append(figure3["data"][trace])
+
+    #Create a 1x2 subplot
+    this_figure = sp.make_subplots(rows=2,
+                                   cols=2,
+                                   specs=[[{
+                                       'colspan': 2
+                                   }, None], [{}, {}]])
+
+    # Get the Express fig broken down as traces and add the traces to the proper plot within in the subplot
+    for traces in figure1_traces:
+        this_figure.append_trace(traces, row=1, col=1)
+
+    for traces in figure2_traces:
+        this_figure.append_trace(traces, row=2, col=1)
+
+    for traces in figure3_traces:
+        this_figure.append_trace(traces, row=2, col=2)
+
+    this_figure.update_layout(height=900, width=1100)
+    this_figure.update_layout(uniformtext_minsize=15)
+
+    this_figure.update_layout(title_text=f"{movie_name} Gender Statistics")
+
+    return this_figure
