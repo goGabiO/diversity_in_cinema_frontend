@@ -8,61 +8,79 @@ from diversity_in_cinema_frontend.visualizations import *
 from diversity_in_cinema_frontend.utils import *
 import requests
 
-# CSS = """
-# h1 {
-#     color: black;
-# }
-# h2 {
-#     color: black;
-# }
-# h3 {
-#     color: black;
-# }
-# p {
-#     color: black;
-# }
-# """
-# st.write(f'<style>{CSS}</style>', unsafe_allow_html=True)
-
-# @st.cache
-# def load_image(path):
-#     with open(path, 'rb') as f:
-#         data = f.read()
-#     encoded = base64.b64encode(data).decode()
-#     return encoded
-
-
-# def image_tag(path):
-#     encoded = load_image(path)
-#     tag = f'<img src="data:faces/webp;base64,{encoded}">'
-#     return tag
-
-
-# def background_image_style(path):
-#     encoded = load_image(path)
-#     style = f'''
-#     <style>
-#     .stApp {{
-#         background-image: url("data:faces/webp;base64,{encoded}");
-#         background-size: cover;
-#     }}
-#     </style>
-#     '''
-#     return style
-
-
-# image_path = 'faces.webp'
-# image_link = '~/code/moe221/diversity_in_cinema_frontend/'
-
-# st.write(background_image_style(image_path), unsafe_allow_html=True) hello
-
-st.sidebar.header("Diversity and Representation in Hollywood")
-
 movie_options = get_movie_list("CSVs")
 
-option = st.sidebar.selectbox("Select a movie to view", (movie_options))
+option = st.selectbox("Select an initial movie to view", (movie_options))
 
-if option != "":
+if option == "":
+    CSS = """
+    h1 {
+        color: black;
+        font-family: "Lucida Console", "Courier New", monospace;
+     }
+    h2 {
+        color: black;
+        font-family: "Lucida Console", "Courier New", monospace;
+     }
+    h3 {
+        color: black;
+        font-family: "Lucida Console", "Courier New", monospace;
+     }
+    p {
+        color: black;
+        font-family: "Lucida Console", "Courier New", monospace;
+     }
+     body {background-color: white;}
+     """
+    st.write(f'<style>{CSS}</style>', unsafe_allow_html=True)
+
+    # @st.cache
+    # def load_image(path):
+    #     with open(path, 'rb') as f:
+    #         data = f.read()
+    #     encoded = base64.b64encode(data).decode()
+    #     return encoded
+
+    # def image_tag(path):
+    #     encoded = load_image(path)
+    #     tag = f'<img src="data:wp7062810/jpg;base64,{encoded}">'
+    #     return tag
+
+    # def background_image_style(path):
+    #     encoded = load_image(path)
+    #     style = f'''
+    #     <style>
+    #     .stApp {{
+    #         background-image: url("data:wp7062810/jpg;base64,{encoded}");
+    #         background-size: cover;
+    #     }}
+    #     </style>
+    #     '''
+    #     return style
+
+    # image_path = 'wp7062810.jpg'
+    # image_link = '~/code/moe221/diversity_in_cinema_frontend/'
+
+    # st.write(background_image_style(image_path), unsafe_allow_html=True)
+
+    st.title("Diversity in")
+
+    image = Image.open('Hollywood-Sign.png')
+    st.image(image, use_column_width=True)
+
+    # with col1:
+    #     url = 'https://i.pinimg.com/originals/d8/9b/35/d89b3534d687eb456c47c4e5097b81c6.png'
+    #     response = requests.get(url.strip(), stream=True)
+    #     image = Image.open(response.raw)
+    #     st.image(image, use_column_width=True, output_format="PNG")
+
+    st.text('')
+    st.text('Diversity in Hollywood uses deep learning to detect faces in')
+    st.text('every key frame of a selected movie and generates a dashboard showing statistics')
+    st.text('on gender and race representation, along with a composite "face of the movie"')
+
+else:
+    st.sidebar.header("Diversity in Hollywood")
     select_status = st.sidebar.radio(
         "Pages", ('Info', 'Gender Statistics', 'Race Statistics',
                   'Statistical Overview'))
@@ -190,10 +208,3 @@ if option != "":
 
     else:
         pass
-
-else:
-    st.title("Diversity and Representation in Hollywood")
-    url = 'https://i.pinimg.com/originals/d8/9b/35/d89b3534d687eb456c47c4e5097b81c6.png'
-    response = requests.get(url.strip(), stream=True)
-    image = Image.open(response.raw)
-    st.image(image, use_column_width=True, output_format="PNG")
