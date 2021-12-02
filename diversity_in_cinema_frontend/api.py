@@ -37,28 +37,43 @@ def fetch_movie_details(movie):
     """
     Get desired movie details from The Movie DB API. Returns error string if not found
     """
-
-    movie_id = fetch_movie_basic_data(movie)
-
-    url = f'https://api.themoviedb.org/3/movie/{movie_id[0]}?api_key={api_key}&language=en-US'
-
-    response = requests.get(url)
-
-    if response.status_code != 200:
-
-        return 'Error: status code not 200'
-
-    data = response.json()
+    print(movie)
 
     keep_data = {}
 
-    keep_data['genres'] = data['genres']
-    keep_data['spoken_languages'] = data['spoken_languages']
-    keep_data['runtime'] = data['runtime']
-    keep_data['revenue'] = data['revenue']
+    try:
 
-    # pd.DataFrame.from_dict(data)
-    return keep_data
+        movie_id = fetch_movie_basic_data(movie)
+        url = f'https://api.themoviedb.org/3/movie/{movie_id[0]}?api_key={api_key}&language=en-US'
+
+        response = requests.get(url)
+
+        if response.status_code != 200:
+
+            keep_data['genres'] = "None"
+            keep_data['spoken_languages'] = "None"
+            keep_data['runtime'] = 0
+            keep_data['revenue'] = 0
+
+            return keep_data
+
+        else:
+
+            data = response.json()
+            keep_data['genres'] = data['genres']
+            keep_data['spoken_languages'] = data['spoken_languages']
+            keep_data['runtime'] = data['runtime']
+            keep_data['revenue'] = data['revenue']
+
+            return keep_data
+
+    except:
+        keep_data['genres'] = "None"
+        keep_data['spoken_languages'] = "None"
+        keep_data['runtime'] = 0
+        keep_data['revenue'] = 0
+
+        return keep_data
 
 
 def fetch_movie_credits(movie):

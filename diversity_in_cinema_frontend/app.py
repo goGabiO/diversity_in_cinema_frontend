@@ -181,14 +181,14 @@ else:
             file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics'
             df = pd.read_csv(file_name)
 
-            go_fig = g_screentime_donut(df)
-            st.plotly_chart(go_fig, use_container_width=True)
+            go_fig = dashboard_gender(movie_name, df)
+            st.plotly_chart(go_fig, use_container_width=False, )
 
-            go_2_fig = only_men_screentime_donut(df)
-            st.plotly_chart(go_2_fig, use_container_width=True)
+            # go_2_fig = only_men_screentime_donut(df)
+            # st.plotly_chart(go_2_fig, use_container_width=False)
 
-            go_3_fig = only_women_screentime_donut(df)
-            st.plotly_chart(go_3_fig, use_container_width=True)
+            # go_3_fig = only_women_screentime_donut(df)
+            # st.plotly_chart(go_3_fig, use_container_width=False)
 
     elif select_status == 'Race Statistics':
         with st.container():

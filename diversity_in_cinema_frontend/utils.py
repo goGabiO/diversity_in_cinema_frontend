@@ -3,6 +3,8 @@ import re
 import pandas as pd
 from tqdm import tqdm
 from diversity_in_cinema_frontend.params import *
+from diversity_in_cinema_frontend.api import fetch_movie_basic_data
+from diversity_in_cinema_frontend.api import fetch_movie_details
 
 
 def get_movie_list(subfolders):
@@ -34,16 +36,13 @@ def get_evolution_data():
 
     regex = re.compile(r'\((\d{4})\)')
 
-    movie_list = get_movie_list("CSVs")
+    movie_list = get_movie_list("CSVs")[1:]
 
     for movie in tqdm(movie_list):
-
-        movie = movie.replace(" ","_")
 
         if movie == "":
             continue
 
-        print(movie)
         year = regex.findall(movie)[0]
 
         df = pd.read_csv(
@@ -60,7 +59,21 @@ def get_evolution_data():
     df_stats_total = pd.concat(df_stats_list, axis=0)
     df_stats_total.sort_values("year", inplace=True)
 
-    return df_stats_total
+    def add_revenue(column):
+
+        column = column.replace("_", " ")
+        return fetch_movie_details(column).get("revenue", None)
+
+    def add_runtime(column):
+
+        column = column.replace("_", " ")
+        return fetch_movie_details(column).get("runtime", None)
+
+    df_stats_total["revenue"] = df_stats_total["title"].apply(add_revenue)
+    df_stats_total["runtime"] = df_stats_total["title"].apply(add_runtime)
+
+    return df_stats_total.reset_index()
+
 
 if __name__ == "__main__":
     # print(get_movie_list("CSVs"))
