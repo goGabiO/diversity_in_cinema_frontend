@@ -136,12 +136,20 @@ else:
             st.image(image, use_column_width=True, output_format="PNG")
 
         with col3:
-            # movie_face = option
-            # url = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_face}.jpg'
-            # response = requests.get(url.strip(), stream=True)
-            # image = Image.open(response.raw)
-            # st.image(image, use_column_width=True, output_format="JPG")
-            pass
+            try:
+                movie_face = option
+                url = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/faces/{movie_face}_avg_face.jpg'
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                response = requests.get(url.strip(), stream=True)
+                image = Image.open(response.raw)
+                st.image(image, use_column_width=True, output_format="JPG")
+            except:
+                pass
 
         col1, col2, col3 = st.columns(3)
         with col1:
