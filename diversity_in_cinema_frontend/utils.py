@@ -82,4 +82,5 @@ def get_evolution_data():
 
 if __name__ == "__main__":
     # print(get_movie_list("CSVs"))
-    get_evolution_data()
+    data = get_evolution_data()
+    data.to_csv("overall_dash_data.csv")

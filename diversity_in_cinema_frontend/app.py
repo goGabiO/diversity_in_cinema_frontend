@@ -49,13 +49,29 @@ if option == "":
         st.text('on gender and race representation, along with a composite "face of the movie"')
 
     elif select_status == 'Overall Statistics':
-        total_stats_df = pd.read_csv(
-            'overall_dash_data.csv')
-        go_fig = overall_gender_dash(total_stats_df)
-        st.plotly_chart(go_fig, use_container_width=False)
 
-        go_fig_2 = overall_race_dash(total_stats_df)
-        st.plotly_chart(go_fig_2, use_container_width=False)
+        col1, col2, col3 = st.columns([6,6,1])
+
+        with col1:
+            total_stats_df = pd.read_csv('overall_dash_data.csv')
+            go_fig = women_revenue_scatter(total_stats_df)
+            st.plotly_chart(go_fig, use_column_width=True)
+
+        with col1:
+            st.write("")
+            go_fig_2 = plot_gender_timeline(total_stats_df, "bar")
+            st.plotly_chart(go_fig_2, use_column_width=True)
+
+
+        with col1:
+            st.write("---"*500)
+            go_fig_3 = plot_race_timeline(total_stats_df)
+            st.plotly_chart(go_fig_3, use_column_width=False)
+
+        with col1:
+            go_fig_4 = poc_scatter_revenue(total_stats_df)
+            st.plotly_chart(go_fig_4, use_column_width=False)
+
 
     # @st.cache
     # def load_image(path):
@@ -120,12 +136,20 @@ else:
             st.image(image, use_column_width=True, output_format="PNG")
 
         with col3:
-            # movie_face = option
-            # url = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_face}.jpg'
-            # response = requests.get(url.strip(), stream=True)
-            # image = Image.open(response.raw)
-            # st.image(image, use_column_width=True, output_format="JPG")
-            pass
+            try:
+                movie_face = option
+                url = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/faces/{movie_face}_avg_face.jpg'
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                response = requests.get(url.strip(), stream=True)
+                image = Image.open(response.raw)
+                st.image(image, use_column_width=True, output_format="JPG")
+            except:
+                pass
 
         col1, col2, col3 = st.columns(3)
         with col1:
@@ -187,37 +211,54 @@ else:
 
 
     elif select_status == 'Gender Statistics':
-        with st.container():
+
+        col1, col2, col3, col4 = st.columns([5,1,1,1])
+
+        #option_new = option.replace(':','').replace(',',' ')
+        search_terms = option.split()
+        movie_name = '_'.join(search_terms)
+        file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics'
+        df = pd.read_csv(file_name)
+
+        with col1:
             st.header("Gender Statistics")
-            #option_new = option.replace(':','').replace(',',' ')
-            search_terms = option.split()
-            movie_name = '_'.join(search_terms)
-            file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics'
-            df = pd.read_csv(file_name)
 
-            go_fig = dashboard_gender(movie_name, df)
-            st.plotly_chart(go_fig, use_container_width=False, )
+            go_fig = run_time(movie_name)
+            st.plotly_chart(go_fig, use_column_width=True)
 
-            # go_2_fig = only_men_screentime_donut(df)
-            # st.plotly_chart(go_2_fig, use_container_width=False)
+        with col1:
+            go_fig = man_woman_screentime_bar(df)
+            st.plotly_chart(go_fig, use_column_width=True)
 
-            # go_3_fig = only_women_screentime_donut(df)
-            # st.plotly_chart(go_3_fig, use_container_width=False)
+        with col1:
+
+            go_fig = only_women_screentime_donut(df)
+            st.plotly_chart(go_fig, use_column_width=True)
 
     elif select_status == 'Race Statistics':
-        with st.container():
+
+        col1, col2, col3, col4 = st.columns([5,1,1,1])
+
+        #option_new = option.replace(':','').replace(',',' ')
+        search_terms = option.split()
+        movie_name = '_'.join(search_terms)
+        file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics'
+        df = pd.read_csv(file_name)
+
+        with col1:
             st.header("Race Statistics")
-            #option_new = option.replace(':', '').replace(',',' ')
-            search_terms = option.split()
-            movie_name = '_'.join(search_terms)
-            file_name = f'https://storage.googleapis.com/wagon-data-735-movie-diversity/CSVs/{movie_name}/statistics'
-            df = pd.read_csv(file_name)
 
+            go_fig = run_time(movie_name, by="race")
+            st.plotly_chart(go_fig, use_column_width=True)
+
+        with col1:
             go_fig = r_screentime_donut(df)
-            st.plotly_chart(go_fig, use_container_width=True)
+            st.plotly_chart(go_fig, use_column_width=True)
 
-            go_2_fig = woc_screentime_donut(df)
-            st.plotly_chart(go_2_fig, use_container_width=True)
+        with col1:
+
+            go_fig = woc_screentime_donut(df)
+            st.plotly_chart(go_fig, use_column_width=True)
 
 
     else:
