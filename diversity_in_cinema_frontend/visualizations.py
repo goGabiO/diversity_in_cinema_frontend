@@ -124,7 +124,7 @@ def plot_race_timeline(total_stats_df, plot_type="line", step=5):
                           "year": ""
                       })
 
-    fig.update_layout(title_text='Screentime distribution timeseries - POC',
+    fig.update_layout(title_text='Screentime Distribution Timeseries - *POC',
                           font=dict(size=18))
 
     fig.update_layout(autosize=False,
@@ -185,7 +185,7 @@ def run_time_distribution(movie_title, by="gender"):
                      size_max=60,
                      labels={"face_id": "Number of detected faces",
                              "minutes": "Film length [minutes]"},
-                     title=f"Distribution of {by.capitalize()} Over Film Run-time")
+                     title=f"Distribution of {by.capitalize()} Over Film Runtime")
 
     return fig
 
@@ -313,11 +313,11 @@ def overall_gender_dash(total_stats_df):
             mode='markers',
             hovertext=total_stats_df["title"],
             marker=dict(color='rgb(255,185,15)'),
-            name='Number of women on screen VS. movie revenue',
+            name='Number of Women on Screen vs. Movie Revenue',
         ), 1, 1)
 
     fig.update_layout(
-        title='Women screentime and movie revenue',
+        title='Women Screentime and Movie Revenue',
         yaxis=dict(showgrid=False,
                    showline=False,
                    showticklabels=True,
@@ -353,7 +353,7 @@ def overall_gender_dash(total_stats_df):
     fig['layout'][f'xaxis{1}'].update(
         title=f'Cumulated number of women on screen', title_font_size=19)
     fig['layout'][f'xaxis{3}'].update(
-        title=f'Percantage of Screentime - Women', title_font_size=19)
+        title=f'Percantage of screentime - Women', title_font_size=19)
 
 
 
@@ -384,7 +384,7 @@ def overall_race_dash(total_stats_df):
                          width=800, height=400,
                          labels={
                              "revenue": "Movie Revenue [US$]",
-                             "non_white_count": "POC on screen count"
+                             "non_white_count": "*POC on screen count"
                          },
                          color_discrete_sequence=['rgb(255,185,15)'])
 
@@ -418,7 +418,7 @@ def overall_race_dash(total_stats_df):
 
     this_figure.update_layout(
         title_text=
-        f"Number of POC VS. revenue  |  Screentime percentage evolution",
+        f"Number of *POC vs. Revenue  |  Screentime Percentage Evolution",
         title_font_size=24)
 
     # # x axis labels
@@ -455,7 +455,7 @@ def women_revenue_scatter(total_stats_df):
                    hovertext=total_stats_df["title"],
                    marker=dict(color='rgb(255,185,15)')))
 
-    fig.update_layout(title_text='Number of women on screen VS. movie revenue',
+    fig.update_layout(title_text='Number of Women on Screen vs. Movie Revenue',
                       font=dict(size=18))
 
     fig.update_layout(autosize=True,
@@ -491,7 +491,7 @@ def women_movie_percentage(total_stats_df):
                orientation='h',
                marker=dict(color='rgb(24,116,205)')))
 
-    fig.update_layout(title_text='Screentime percentage of women in movies',
+    fig.update_layout(title_text='Screentime Percentage of Women in Movies',
                       font=dict(size=15))
 
     fig.update_layout(autosize=True,
@@ -547,7 +547,7 @@ def plot_gender_timeline(total_stats_df, plot_type="line", step=5):
             })
 
     fig.update_layout(
-            title_text='Screentime distribution timeseries - Gender',
+            title_text='Screentime Distribution Timeseries - Gender',
             font=dict(size=18))
 
     fig.update_layout(autosize=False,
@@ -580,18 +580,18 @@ def poc_scatter_revenue(total_stats_df):
                          height=400,
                          labels={
                              "revenue": "Movie Revenue [US$]",
-                             "non_white_count": "POC on screen count"
+                             "non_white_count": "*POC on screen count"
                          },
                          color_discrete_sequence=['rgb(255,185,15)'])
 
-    fig.update_layout(title_text='Cumulated number of POC on screen',
+    fig.update_layout(title_text='Cumulated number of *POC on screen',
                       font=dict(size=18))
 
     fig.update_layout(autosize=False,
                       width=1120,
                       height=500,
                       yaxis=dict(
-                          title_text="Screentime [%]",
+                          title_text="Movie Revenue [US$]",
                           titlefont=dict(size=18),
                       ))
 
@@ -627,7 +627,7 @@ def run_time(movie_title, by="gender"):
             "face_id": "Number of detected faces",
             "minutes": "Film length [minutes]"
         },
-        title=f"Distribution of {by.capitalize()} Over Film Run-time")
+        title=f"Distribution of {by.capitalize()} Over Film Runtime")
 
     fig.update_layout(font=dict(size=20))
 
@@ -657,7 +657,7 @@ def only_women_screentime_donut(df):
                          width=1195,
                          height=600)
 
-    go_fig.update_layout(title_text='Proportion of frames conatning only men or only women',
+    go_fig.update_layout(title_text='Proportion of Frames Containing Only Men or Only Women',
                          font=dict(size=20))
 
     return go_fig
@@ -685,7 +685,7 @@ def man_woman_screentime_bar(df):
     fig.update_layout(autosize=False, width=1000, height=500)
 
     fig.update_layout(
-        title_text='Distribution of men and women over all movie frames',
+        title_text='Distribution of Men and Women Over All Movie Frames',
         font=dict(size=20))
 
     return fig
@@ -733,7 +733,7 @@ def woc_screentime_donut(df):
     go_fig.update_layout(autosize=False, width=1195, height=600)
 
     go_fig.update_layout(
-        title_text='Proportion of frames featuring women of color',
+        title_text='Proportion of Frames Featuring Women of Color',
         font=dict(size=20))
 
     return go_fig

@@ -72,6 +72,13 @@ if option == "":
             go_fig_4 = poc_scatter_revenue(total_stats_df)
             st.plotly_chart(go_fig_4, use_column_width=False)
 
+        with col1:
+            st.write("")
+            st.write("")
+            st.write("")
+            st.write("")
+            st.write("*POC : People of color")
+
 
     # @st.cache
     # def load_image(path):
