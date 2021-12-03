@@ -74,83 +74,9 @@ def only_women_screentime_bar(df):
     return fig
 
 
-def r_screentime_donut(df):
-    x = [df['asian_screentime'].values[0],
-        df['black_screentime'].values[0],
-        df['indian_screentime'].values[0],
-        df['latino_hispanic_screentime'].values[0],
-        df['middle_eastern_screentime'].values[0],
-        df['white_screentime'].values[0]
-        ]
-    names = ['Asian', 'Black', 'Indian', 'Latino Hispanic', 'Middle Eastern', 'White']
-
-    go_fig = go.Figure()
-
-    do_fig = go.Pie(labels=names, values=x, hole=0.5)
-    go_fig.add_trace(do_fig)
-    go_fig.add_annotation(text="Screentime per race")
-    return go_fig
-
-
-def woc_screentime_donut(df):
-    x = [df['women_of_color'].values[0], (100-df['women_of_color'].values[0])]
-    names = ['Women of color', 'No women of color']
-
-    go_fig = go.Figure()
-
-    do_fig = go.Pie(labels=names, values=x, hole=0.5)
-    go_fig.add_trace(do_fig)
-    go_fig.add_annotation(text="Screentime when women of color are present")
-    return go_fig
-
 ######### Moe's Plots ###########
 
-
-def plot_gender_timeline(df, plot_type="bar", step=5):
-
-    # group by decade
-    df_grouped = df.groupby(
-        pd.cut(df["year"],
-               pd.date_range('1920', '2030', freq=f'{step}YS'),
-               right=False)).mean()
-
-    new_df = pd.DataFrame({
-        'year':
-        pd.date_range(start='01-01-1920', end='01-01-2030', freq=f'{step}YS')
-    })
-    df_stats_total = new_df.merge(df, on='year', how='left')
-    df_grouped = df_stats_total.groupby(
-        pd.Grouper(key='year', freq=f'{step}YS')).mean()
-    df_grouped = df_grouped.dropna()
-
-    if plot_type == "bar":
-        # plot gender over time
-        fig = px.bar(
-            df_grouped,
-            x=df_grouped.index,
-            y=['man_screentime', 'woman_screentime', 'only_men', 'only_women'],
-            barmode="overlay",
-            labels={
-                "value": "Screentime [%]",
-                "year": ""
-            })
-        fig.show()
-
-    elif plot_type == "line":
-        fig = px.line(
-            df_grouped,
-            x=df_grouped.index,
-            y=['man_screentime', 'woman_screentime', 'only_men', 'only_women'],
-            labels={
-                "value": "Screentime [%]",
-                "year": ""
-            })
-
-    return fig
-
-
-
-def plot_race_timeline(total_stats_df, plot_type="bar", step=5):
+def plot_race_timeline(total_stats_df, plot_type="line", step=5):
 
     # group by decade
     total_stats_df['year'] = pd.to_datetime(total_stats_df['year'])
@@ -197,6 +123,17 @@ def plot_race_timeline(total_stats_df, plot_type="bar", step=5):
                           "value": "Screentime [%]",
                           "year": ""
                       })
+
+    fig.update_layout(title_text='Screentime distribution timeseries - POC',
+                          font=dict(size=18))
+
+    fig.update_layout(autosize=False,
+                      width=1315,
+                      height=500,
+                      yaxis=dict(
+                          title_text="Screentime [%]",
+                          titlefont=dict(size=18),
+                      ))
     return fig
 
 
@@ -222,53 +159,6 @@ def race_screentime_bar(df):
                  },
                  color=one_movie_race.index)
     return fig
-
-
-def man_woman_screentime_bar(df):
-    """
-    Input: Original movie overview dataframe
-    """
-
-    one_movie_gender = df[["man_screentime", "woman_screentime"]]
-    one_movie_gender = one_movie_gender.T
-
-    fig = px.bar(one_movie_gender,
-                 x=one_movie_gender.index,
-                 y=one_movie_gender[0],
-                 labels={
-                     "index": "",
-                     "0": "Screentime [%]"
-                 },
-                 color=one_movie_gender.index)
-
-    return fig
-
-def run_time(movie_title, by="gender"):
-
-    movie_title = movie_title.replace("_", " ").replace(".csv", "") + ".csv"
-
-    df = pd.read_csv(
-    f"gs://{BUCKET_NAME}/output/{movie_title}", index_col=None,)
-
-    # add seconds column -> 1 frame = 0.5 seconds
-    df["seconds"] = df["frame_number"] / 2
-
-    # add minutes
-    df["minutes"] = round((df["seconds"] / 60))
-
-    df_grouped = df.groupby(["minutes", by], as_index=False).count()
-
-
-    fig = px.scatter(df_grouped,
-                     x="minutes",
-                     y="face_id",
-                     size="face_id",
-                     color=by,
-                     size_max=60,
-                     labels={"face_id": "Number of detected faces", "minutes": "Film length [minutes]"},
-                    title=f"Distribution of {by.capitalize()} Over Film Run-time")
-    return fig
-
 
 
 def run_time_distribution(movie_title, by="gender"):
@@ -394,17 +284,14 @@ def overall_gender_dash(total_stats_df):
 
     x2 = total_stats_df["revenue"].values
 
-    x1 = total_stats_df["title"].values
+    x1 = total_stats_df["year"].values
     y_net_worth = total_stats_df["total_Woman"].values
 
     # Creating two subplots
     fig = make_subplots(rows=1,
-                        cols=2,
-                        specs=[[{}, {}]],
-                        shared_xaxes=True,
-                        shared_yaxes=False,
-                        vertical_spacing=0.02,
-                        horizontal_spacing=0.1)
+                        cols=4,
+                        specs=[[{}, {}, {}, {}]],
+                        column_widths=[25, 5, 30, 2])
 
     fig.append_trace(
         go.Bar(
@@ -412,11 +299,12 @@ def overall_gender_dash(total_stats_df):
             y=x1,
             marker=dict(
                 color='rgb(24,116,205)',
-                line=dict(color='rgb(0,191,255)', width=1),
+                line=dict(color='rgb(0,191,255)', width=0.5),
             ),
             name='Screentime percentage of woman per movie',
             orientation='h',
-        ), 1, 1)
+        ), 1, 3)
+
 
     fig.append_trace(
         go.Scatter(
@@ -426,7 +314,7 @@ def overall_gender_dash(total_stats_df):
             hovertext=total_stats_df["title"],
             marker=dict(color='rgb(255,185,15)'),
             name='Number of women on screen VS. movie revenue',
-        ), 1, 2)
+        ), 1, 1)
 
     fig.update_layout(
         title='Women screentime and movie revenue',
@@ -454,18 +342,20 @@ def overall_gender_dash(total_stats_df):
         margin=dict(l=100, r=20, t=70, b=70),
     )
 
-    fig.update_layout(shapes=[
-        dict(
-            type="line",
-            xref='paper',
-            yref='paper',
-            x0=0.433,
-            y0=0.89,
-            x1=0.433,
-            y1=0.002,
-            line=dict(color="black", width=3),
-        ),
-    ], )
+    fig.update_layout(font_size=15)
+
+
+    # y axis labels
+    fig['layout'][f'yaxis{1}'].update(title=f'Movie revenue [US$]',
+                                      title_font_size=19)
+
+    # x axis labels
+    fig['layout'][f'xaxis{1}'].update(
+        title=f'Cumulated number of women on screen', title_font_size=19)
+    fig['layout'][f'xaxis{3}'].update(
+        title=f'Percantage of Screentime - Women', title_font_size=19)
+
+
 
     return fig
 
@@ -475,6 +365,7 @@ import plotly.subplots as sp
 
 
 def overall_race_dash(total_stats_df):
+
     total_stats_df["non_white_count"] = total_stats_df[[
         'total_asian', 'total_black', 'total_indian', 'total_latino_hispanic',
         'total_middle_eastern'
@@ -484,12 +375,13 @@ def overall_race_dash(total_stats_df):
         "non_white_count"] / total_stats_df["total_white"]
 
     # Create figures in Express
-    figure2 = plot_race_timeline(total_stats_df, plot_type="bar", step=10)
+    figure2 = plot_race_timeline(total_stats_df, plot_type="line", step=10)
 
     figure1 = px.scatter(total_stats_df,
                          x="non_white_count",
                          y="revenue",
                          hover_name="title",
+                         width=800, height=400,
                          labels={
                              "revenue": "Movie Revenue [US$]",
                              "non_white_count": "POC on screen count"
@@ -509,22 +401,339 @@ def overall_race_dash(total_stats_df):
         figure2_traces.append(figure2["data"][trace])
 
     #Create a 1x2 subplot
-    this_figure = sp.make_subplots(rows=1, cols=2, specs=[[{}, {}]])
+    this_figure = sp.make_subplots(rows=1,
+                                   cols=3,
+                                   specs=[[{}, {}, {}]],
+                                   column_widths=[20,1,20])
 
     # Get the Express fig broken down as traces and add the traces to the proper plot within in the subplot
     for traces in figure1_traces:
         this_figure.append_trace(traces, row=1, col=1)
 
     for traces in figure2_traces:
-        this_figure.append_trace(traces, row=1, col=2)
+        this_figure.append_trace(traces, row=1, col=3)
 
-    this_figure.update_layout(height=500, width=1100)
-    this_figure.update_layout(uniformtext_minsize=15)
+    this_figure.update_layout(height=500, width=1200)
+    this_figure.update_layout(uniformtext_minsize=30)
 
     this_figure.update_layout(
         title_text=
-        f"Number of POC VS. revenue  |  Screentime percentage evolution"
-    )
+        f"Number of POC VS. revenue  |  Screentime percentage evolution",
+        title_font_size=24)
+
+    # # x axis labels
+    # fig['layout'][f'xaxis{1}'].update(
+    #     title=f'Cumulated number of women on screen', title_font_size=19)
+    # fig['layout'][f'xaxis{3}'].update(
+    #     title=f'Percantage of Screentime - Women', title_font_size=19)
+
+    this_figure['layout'][f'xaxis{1}'].update(title=f'Title {2}',
+                                              title_font_size=30)
+    this_figure['layout'][f'xaxis{3}'].update(title=f'Title {3}')
     # Add annotations in the center of the donut pies
 
     return this_figure
+
+
+
+################### NEW PLOT #####################
+def women_revenue_scatter(total_stats_df):
+
+    total_stats_df.sort_values(by="woman_screentime",
+                               ascending=False,
+                               inplace=True)
+
+    y = total_stats_df["revenue"].values
+    x = total_stats_df["total_Woman"].values
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatter(x=x,
+                   y=y,
+                   mode='markers',
+                   hovertext=total_stats_df["title"],
+                   marker=dict(color='rgb(255,185,15)')))
+
+    fig.update_layout(title_text='Number of women on screen VS. movie revenue',
+                      font=dict(size=18))
+
+    fig.update_layout(autosize=True,
+                      width=1100,
+                      height=500,
+                      yaxis=dict(
+                          title_text="Movie revenue [US$]",
+                          titlefont=dict(size=18),
+                      ),
+                      xaxis=dict(
+                          title_text="Cumulated number of women on screen",
+                          titlefont=dict(size=18),
+                      ))
+
+    return fig
+
+
+def women_movie_percentage(total_stats_df):
+
+    total_stats_df.sort_values(by="woman_screentime",
+                               ascending=False,
+                               inplace=True)
+
+    y = total_stats_df["title"].values
+    x = total_stats_df["woman_screentime"].values
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Bar(x=x,
+               y=y,
+               hovertext=total_stats_df["revenue"],
+               orientation='h',
+               marker=dict(color='rgb(24,116,205)')))
+
+    fig.update_layout(title_text='Screentime percentage of women in movies',
+                      font=dict(size=15))
+
+    fig.update_layout(autosize=True,
+                      width=1000,
+                      height=500,
+                      xaxis=dict(
+                          title_text="Screentime [%]",
+                          titlefont=dict(size=18),
+                      ))
+
+    return fig
+
+
+def plot_gender_timeline(total_stats_df, plot_type="line", step=5):
+
+    # group by decade
+    total_stats_df['year'] = pd.to_datetime(total_stats_df['year'])
+    df_grouped = total_stats_df.groupby(
+        pd.cut(total_stats_df["year"],
+               pd.date_range('1920', '2030', freq=f'{step}YS'),
+               right=False)).mean()
+
+    new_df = pd.DataFrame({
+        'year':
+        pd.date_range(start='01-01-1920', end='01-01-2030', freq=f'{step}YS')
+    })
+    df_stats_total = new_df.merge(total_stats_df, on='year', how='left')
+    df_grouped = df_stats_total.groupby(
+        pd.Grouper(key='year', freq=f'{step}YS')).mean()
+    df_grouped = df_grouped.dropna()
+
+    if plot_type == "bar":
+        # plot gender over time
+        fig = px.bar(
+            df_grouped,
+            x=df_grouped.index,
+            y=['man_screentime', 'woman_screentime', 'only_men', 'only_women'],
+
+            labels={
+                "value": "Screentime [%]",
+                "year": ""
+            })
+
+    elif plot_type == "line":
+        fig = px.line(
+            df_grouped,
+            x=df_grouped.index,
+            y=['man_screentime', 'woman_screentime', 'only_men', 'only_women'],
+            labels={
+                "value": "Screentime [%]",
+                "year": "",
+                "variable":""
+            })
+
+    fig.update_layout(
+            title_text='Screentime distribution timeseries - Gender',
+            font=dict(size=18))
+
+    fig.update_layout(autosize=False,
+                      width=1250,
+                      height=500,
+                      yaxis=dict(
+                          title_text="Screentime [%]",
+                          titlefont=dict(size=18),
+                      ))
+
+    return fig
+
+
+def poc_scatter_revenue(total_stats_df):
+
+    total_stats_df["non_white_count"] = total_stats_df[[
+        'total_asian', 'total_black', 'total_indian', 'total_latino_hispanic',
+        'total_middle_eastern'
+    ]].sum(axis=1)
+
+    total_stats_df["non_white_count_percent"] = total_stats_df[
+        "non_white_count"] / total_stats_df["total_white"]
+
+
+    fig = px.scatter(total_stats_df,
+                         x="non_white_count",
+                         y="revenue",
+                         hover_name="title",
+                         width=800,
+                         height=400,
+                         labels={
+                             "revenue": "Movie Revenue [US$]",
+                             "non_white_count": "POC on screen count"
+                         },
+                         color_discrete_sequence=['rgb(255,185,15)'])
+
+    fig.update_layout(title_text='Cumulated number of POC on screen',
+                      font=dict(size=18))
+
+    fig.update_layout(autosize=False,
+                      width=1120,
+                      height=500,
+                      yaxis=dict(
+                          title_text="Screentime [%]",
+                          titlefont=dict(size=18),
+                      ))
+
+    return fig
+
+
+def run_time(movie_title, by="gender"):
+
+    movie_title = movie_title.replace("_", " ").replace(".csv", "") + ".csv"
+
+    df = pd.read_csv(
+        f"gs://{BUCKET_NAME}/output/{movie_title}",
+        index_col=None,
+    )
+
+    # add seconds column -> 1 frame = 0.5 seconds
+    df["seconds"] = df["frame_number"] / 2
+
+    # add minutes
+    df["minutes"] = round((df["seconds"] / 60))
+
+    df_grouped = df.groupby(["minutes", by], as_index=False).count()
+
+    fig = px.scatter(
+        df_grouped,
+        x="minutes",
+        y="face_id",
+        size="face_id",
+        color=by,
+        width=1200, height=600,
+        size_max=30,
+        labels={
+            "face_id": "Number of detected faces",
+            "minutes": "Film length [minutes]"
+        },
+        title=f"Distribution of {by.capitalize()} Over Film Run-time")
+
+    fig.update_layout(font=dict(size=20))
+
+    fig.update_layout(autosize=False,
+                      width=1000,
+                      height=500,
+                      yaxis=dict(
+                          titlefont=dict(size=20)))
+
+
+    return fig
+
+
+def only_women_screentime_donut(df):
+    x = [
+        df['only_women'].values[0], (df['only_men'].values[0]),
+        (100 - (df['only_men'].values[0] + df['only_women'].values[0]))
+    ]
+    names = ['Frames with only women', 'Frames with only Men', 'Frames with both women and men']
+
+    go_fig = go.Figure()
+
+    do_fig = go.Pie(labels=names, values=x, hole=0.4)
+    go_fig.add_trace(do_fig)
+
+    go_fig.update_layout(autosize=False,
+                         width=1195,
+                         height=600)
+
+    go_fig.update_layout(title_text='Proportion of frames conatning only men or only women',
+                         font=dict(size=20))
+
+    return go_fig
+
+
+def man_woman_screentime_bar(df):
+    """
+    Input: Original movie overview dataframe
+    """
+
+    one_movie_gender = df[["man_screentime", "woman_screentime"]].copy()
+    one_movie_gender.rename({"man_screentime": "Men", "woman_screentime": "Women"}, axis=1, inplace=True)
+    one_movie_gender = one_movie_gender.T
+
+
+    fig = px.bar(one_movie_gender,
+                 x=one_movie_gender.index,
+                 y=one_movie_gender[0],
+                 labels={
+                     "index": "",
+                     "0": "Frames [%]"
+                 },
+                 color=one_movie_gender.index)
+
+    fig.update_layout(autosize=False, width=1000, height=500)
+
+    fig.update_layout(
+        title_text='Distribution of men and women over all movie frames',
+        font=dict(size=20))
+
+    return fig
+
+
+
+def r_screentime_donut(df):
+    x = [
+        df['asian_screentime'].values[0], df['black_screentime'].values[0],
+        df['indian_screentime'].values[0],
+        df['latino_hispanic_screentime'].values[0],
+        df['middle_eastern_screentime'].values[0],
+        df['white_screentime'].values[0]
+    ]
+    names = [
+        'Asian', 'Black', 'Indian', 'Latino Hispanic', 'Middle Eastern',
+        'White'
+    ]
+
+    go_fig = go.Figure()
+
+    do_fig = go.Pie(labels=names, values=x, hole=0.5)
+    go_fig.add_trace(do_fig)
+
+    go_fig.update_layout(autosize=False, width=1195, height=600)
+
+    go_fig.update_layout(
+        title_text='Distribution of Race',
+        font=dict(size=20))
+
+    return go_fig
+
+
+def woc_screentime_donut(df):
+    x = [
+        df['women_of_color'].values[0], (100 - df['women_of_color'].values[0])
+    ]
+    names = ['Women of color', 'White women']
+
+    go_fig = go.Figure()
+
+    do_fig = go.Pie(labels=names, values=x, hole=0.5)
+    go_fig.add_trace(do_fig)
+
+    go_fig.update_layout(autosize=False, width=1195, height=600)
+
+    go_fig.update_layout(
+        title_text='Proportion of frames featuring women of color',
+        font=dict(size=20))
+
+    return go_fig
